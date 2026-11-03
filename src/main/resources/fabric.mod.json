@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "anubisplus",
+  "version": "${version}",
+  "name": "Anubis Client (Mobile)",
+  "description": "Anubis Client with Zalith Launcher 2 mobile support for Minecraft 1.21.1",
+  "authors": [],
+  "contact": {},
+  "license": "All Rights Reserved",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "net.anubis.client.AnubisClientMod"
+    ]
+  },
+  "mixins": [
+    "anubis.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "fabric-api":   "*",
+    "minecraft":    "~1.21.4",
+    "java":         ">=21"
+  },
+  "custom": {
+    "modmenu:badges": []
+  }
+}

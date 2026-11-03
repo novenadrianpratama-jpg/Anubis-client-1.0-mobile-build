@@ -1,0 +1,64 @@
+plugins {
+    id 'fabric-loom' version '1.8.13'
+    id 'maven-publish'
+}
+
+version = project.mod_version
+group   = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
+
+repositories {
+    maven { url 'https://maven.fabricmc.net/' }
+    maven { url 'https://libraries.minecraft.net/' }
+    maven { url 'https://jitpack.io' }
+    mavenCentral()
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+    withSourcesJar()
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+
+    // loom.layered {} with no overlays = pure intermediary mapping.
+    // This lets the decompiled class_XXX / method_XXXXX names compile
+    // directly without Loom trying to remap them to Yarn or Mojang names.
+    // Pure intermediary mappings for MC 1.21.4 — keeps class_XXX names intact
+    mappings loom.layered {}
+
+    modImplementation "net.fabricmc:fabric-loader:${loader_version}"
+
+    // Fabric API
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+
+    // imgui-java — desktop GUI; skipped on mobile via ZalithCompat
+    include implementation("io.github.spair:imgui-java-binding:1.87.6")
+    include implementation("io.github.spair:imgui-java-lwjgl3:1.87.6")
+    include implementation("io.github.spair:imgui-java-natives-linux:1.87.6")
+    include implementation("io.github.spair:imgui-java-natives-windows:1.87.6")
+    include implementation("io.github.spair:imgui-java-natives-macos:1.87.6")
+}
+
+processResources {
+    inputs.property "version", project.version
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = "UTF-8"
+    options.compilerArgs += ["-Xlint:none", "-nowarn"]
+}
+
+jar {
+    from("LICENSE") {
+        rename { "${it}_${project.base.archivesName.get()}" }
+    }
+}
